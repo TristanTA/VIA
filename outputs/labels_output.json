@@ -1,0 +1,71 @@
+{
+    "image_path": "data/sample.jpg",
+    "objects": [
+        {
+            "crop_path": "crops\\crop_0.jpg",
+            "bbox": [
+                683,
+                971,
+                920,
+                1147
+            ],
+            "label": "Car",
+            "info": "White vehicle in the parking area, potential traffic-related setting."
+        },
+        {
+            "crop_path": "crops\\crop_1.jpg",
+            "bbox": [
+                1723,
+                377,
+                1796,
+                502
+            ],
+            "label": "Dog Harness",
+            "info": "Used for walking and controlling pets."
+        },
+        {
+            "crop_path": "crops\\crop_2.jpg",
+            "bbox": [
+                0,
+                955,
+                116,
+                1163
+            ],
+            "label": "Vehicle Tail Light",
+            "info": "Indicates a vehicle braking or turning; typically red."
+        },
+        {
+            "crop_path": "crops\\crop_3.jpg",
+            "bbox": [
+                1937,
+                1727,
+                2214,
+                2314
+            ],
+            "label": "Dog",
+            "info": "Walking along a sidewalk."
+        },
+        {
+            "crop_path": "crops\\crop_4.jpg",
+            "bbox": [
+                547,
+                942,
+                717,
+                1077
+            ],
+            "label": "Car",
+            "info": "Rear view, possibly damaged"
+        },
+        {
+            "crop_path": "crops\\crop_5.jpg",
+            "bbox": [
+                966,
+                1002,
+                1127,
+                1086
+            ],
+            "label": "Dog",
+            "info": "Walking on a sidewalk in an urban area."
+        }
+    ]
+}
