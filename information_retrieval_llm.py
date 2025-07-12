@@ -14,10 +14,9 @@ def image_to_base64(image_path):
     with open(image_path, "rb") as img_file:
         return base64.b64encode(img_file.read()).decode("utf-8")
 
-def query_llm_for_information(full_image_path, image_path):
+def query_llm_for_information(image_path, label):
     """Sends an image to GPT-4o Mini and retrieves relevant info in structured format."""
     client = OpenAI()
-    full_image_b64 = image_to_base64(full_image_path)
     crop_b64 = image_to_base64(image_path)
     response = client.chat.completions.create(
         model=MODEL_NAME,
@@ -26,7 +25,7 @@ def query_llm_for_information(full_image_path, image_path):
                 "role": "system",
                 "content": (
                     "You are an expert image analyst for a visual intelligence system. "
-                    "You receive a full scene image, a cropped image of an object within that scene, and the label for that object."
+                    "You will receive a cropped image of an object within that scene and the label for that object."
                     "Your task is to provide relevant information about the object that can be useful for identification or practical applications.\n\n"
                     "Relevant Info should be short phrases that are more application-oriented and helpful than just descriptive.\n"
                     "Provide only the relevant info, no additional text.\n\n"
@@ -42,8 +41,7 @@ def query_llm_for_information(full_image_path, image_path):
                 "role": "user",
                 "content": [
                     {"type": "text", "text": "Provide relevant information for the following object."},
-                    {"type": "text", "text": "Label: Object Label Here"},  # Placeholder for the label
-                    {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{full_image_b64}"}},
+                    {"type": "text", "text": "Label: {label}"},
                     {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{crop_b64}"}}
                 ]
             }
@@ -52,18 +50,13 @@ def query_llm_for_information(full_image_path, image_path):
     )
     result = response.choices[0].message.content.strip()
 
-    # Parse label and relevant info from LLM response
-    label = ""
     info = ""
 
     for line in result.split("\n"):
-        if line.lower().startswith("label:"):
-            label = line.partition(":")[2].strip()
-        elif line.lower().startswith("relevant info:"):
+        if line.lower().startswith("relevant info:"):
             info = line.partition(":")[2].strip()
 
     return {
-        "label": label,
         "info": info
     }
 

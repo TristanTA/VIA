@@ -17,21 +17,27 @@ def filter_relevant_objects(objects, user_preferences=None):
     # Prepare structured prompt
     objects_description = ""
     for idx, obj in enumerate(objects, 1):
-        objects_description += f"{idx}. Label: {obj['label']}, Info: {obj['info']}\n"
+        objects_description += f"{idx}. Label: {obj['label']}, Info: {obj['relevant_info']}\n"
 
     prompt = (
-        "You are a helpful assistant analyzing detected objects in an image.\n\n"
-        "Here is the list of detected objects:\n"
-        f"{objects_description}\n"
-    )
+    "You are a helpful assistant analyzing detected objects in an image.\n\n"
+    f"Objects detected:\n{objects_description}\n"
+)
 
     if user_preferences:
-        prompt += f"\nUser preferences: {user_preferences}\n"
+        prompt += f"\nUser preferences (if provided): {user_preferences}\n"
 
     prompt += (
-        "\nBased on the above, select only the relevant objects for the user's interests.\n"
-        "Reply ONLY with the numbers of relevant objects, separated by commas (e.g., 1, 3, 5).\n"
-        "If none are relevant, reply with 'None'."
+        "\nSelect only the relevant objects based on user interests.\n"
+        "- Reply with the numbers of relevant objects (e.g., 1, 3, 5) and a relevance score between 0 and 1.\n"
+        "- The relvance score is used to train the model, so it is important to provide a score even if no objects are selected.\n"
+        "You analyze scenes and filter objects based on relevance. Your responses are used to improve future results through feedback."
+        "- Relevance means it is useful for the user in some way, such as practical facts, application-oriented details, or specific characteristics that aid in identification.\n"
+        "- If none are relevant, reply 'None' with a relevance score (still required for training).\n"
+        "- Include only useful objects (practical info, identification details, etc.).\n"
+        "- Irrelevant objects must be excluded, even if unsure.\n\n"
+        "Reply format:\n"
+        "<indices>; <relevance_score>\n"
     )
 
     # Send to LLM
@@ -49,16 +55,22 @@ def filter_relevant_objects(objects, user_preferences=None):
 
 
 def parse_filter_reply(reply, objects):
-    """Parses the LLM reply and returns filtered objects."""
-    if reply.lower() == "none":
-        return []
-
+    """Parses the LLM reply and returns filtered objects and relevance score."""
     try:
-        indices = [int(num.strip()) for num in reply.split(",")]
-        filtered = [objects[i - 1] for i in indices if 1 <= i <= len(objects)]
-        return filtered
+        indices_part, score_part = reply.strip().split(";")
+        relevance_score = float(score_part.strip())
+
+        if indices_part.strip().lower() == "none":
+            return [], relevance_score
+
+        indices = [int(num.strip()) for num in indices_part.strip().split(",")]
+        filtered_objects = [objects[i - 1] for i in indices if 1 <= i <= len(objects)]
+
+        return filtered_objects, relevance_score
+
     except Exception as e:
         print("Error parsing LLM reply:", reply, e)
-        return []  # Fallback: nothing filtered
+        return [], 0.0 
+
 
 

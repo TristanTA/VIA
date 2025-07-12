@@ -1,0 +1,38 @@
+{
+    "image_path": "data/sample.jpg",
+    "objects": [
+        {
+            "crop_path": "crops\\crop_0.jpg",
+            "bbox": [
+                491,
+                275,
+                866,
+                648
+            ],
+            "label": "HP Pavilion 15 Laptop",
+            "relevant_info": "This laptop features an AMD Ryzen processor, suitable for multitasking and general productivity tasks."
+        },
+        {
+            "crop_path": "crops\\crop_3.jpg",
+            "bbox": [
+                673,
+                221,
+                831,
+                332
+            ],
+            "label": "Black Mechanical Keyboard",
+            "relevant_info": "Standard desktop keyboard; may connect via USB or wireless; suitable for general computer use."
+        },
+        {
+            "crop_path": "crops\\crop_2.jpg",
+            "bbox": [
+                689,
+                13,
+                891,
+                184
+            ],
+            "label": "Generic Computer Monitor",
+            "relevant_info": "Monitor type may vary (LCD/LED); common resolutions: 1920x1080 (Full HD); webcam included for video conferencing."
+        }
+    ]
+}
